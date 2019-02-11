@@ -1,7 +1,7 @@
 /*
 ref: Li, Shen, Pan "Likelihood inference for a large directed acyclic graph"
 author: Chunlin Li (li000007@umn.edu), Ziyue Zhu (zhux0502@umn.edu)
-version 2019.02: DFS-cycle detection in algorithm is implemented for cpp function
+version 0.19.02.09: DFS-cycle detection in algorithm is implemented for cpp function, auto initialization added
 */
 
 #include <math.h>
@@ -42,21 +42,7 @@ mu: sparsity par
 inline double objective(const mat &X, const mat &A, const umat &W, const umat &D, double mu)
 {
     mat Y = X - X * A.t();
-    double res = 0.5*accu(Y % Y) / X.n_rows;
-
-    int p = (int) X.n_cols;
-    for(int i = 0; i < p; ++i)
-    {
-        for(int j = 0; j < p; ++j)
-        {
-            if(D(i,j) == 0 && W(i,j) == 1)
-            {
-                res += mu * fabs(A(i,j));
-            }
-        }
-    }
-
-    return  res; 
+    return  0.5*accu(Y % Y) / X.n_rows;
 } 
 
 
@@ -130,7 +116,7 @@ int DFS_cycle(const mat &A, int start, int end)
 
 
 */
-void force_DAG(mat &A, umat &W, double tau)
+void force_DAG(const mat &X, mat &A, umat &W, double tau)
 {
     int p = (int) A.n_cols;
     mat AABS = abs(A);
@@ -140,7 +126,7 @@ void force_DAG(mat &A, umat &W, double tau)
         {
             if(AABS(i,j) < tau)
             {
-                A(i,j) = 0;
+                A(i,j) = 0.0;
                 W(i,j) = 1;
                 AABS(i,j) = INFINITY;
             }
@@ -163,7 +149,7 @@ void force_DAG(mat &A, umat &W, double tau)
         int end = idx(i) % p;
         if(DFS_cycle(A,start,end))
         {
-            A(end,start) = 0;
+            A(end,start) = 0.0;
         }
     }
 
@@ -182,24 +168,49 @@ void force_DAG(mat &A, umat &W, double tau)
         }
     }
 
+    // use OLS estimate 
+    for(int i = 0; i < p; ++i)
+    {
+        uvec idx = find(W.row(i) == 0);
+        int p_TEMP = (int) idx.size();
+        int n = (int) X.n_rows;
+
+        if(p_TEMP > 0 && p_TEMP <= n)
+        {
+            mat X_TEMP = X.cols(idx);
+            vec A_ROW_TEMP = solve(X_TEMP.t()*X_TEMP, X_TEMP.t()*X.col(i)); // can be simplfied using XTX
+
+            for(int j = 0; j < p_TEMP; ++j)
+            {
+                A(i,idx(j)) = A_ROW_TEMP(j);
+                if(fabs(A(i,idx(j))) < tau)
+                {
+                    A(i,idx(j)) = 0.0;
+                    W(i,idx(j)) = 1;
+                }
+            }
+        }
+    }
+
 }
 
 
 /*
 DC_ADMM: solve the optimization problem by DC and ADMM algorithm
-X: data matrix
-A, Lambda: initial estimate, A must be a DAG!!!
-D: index of hypothesized edges, no penalty is imposed
-tau: threshold par in TLP
-mu: sparsity par
-rho: ADMM par
-tol, rel_tol: absolute/relative tolerance
-dc_max_iter, admm_max_iter: DC/ADMM max iteration 
-trace_obj: boolean value, indicate whether to print the obj function after each DC iter
+X: n by p real, data matrix 
+A, Lambda: p by p real, initial estimate, A must be a DAG!!! Lambda must be compatible with A!!!
+D: p by p integer, index of hypothesized edges, no penalty is imposed
+tau: real, threshold par in TLP > 0
+mu: real, sparsity par > 0
+rho: real, ADMM par > 0
+tol, rel_tol: real, absolute/relative tolerance > 0
+dc_max_iter, admm_max_iter: integer, DC/ADMM max iteration 
+auto_init: integer, indicate whether to use automatically initial estimate (A, Lambda), use with caution!!!
+trace_obj: integer, indicate whether to print the obj function after each DC iter
 */
 // [[Rcpp::export]]
 List DC_ADMM(mat X, mat A, mat Lambda, umat D, double tau, double mu, double rho, 
-            double tol_abs, double tol_rel, int dc_max_iter, int admm_max_iter, int trace_obj)
+            double tol_abs, double tol_rel, int dc_max_iter, int admm_max_iter, int auto_init, int trace_obj)
 {   /*
     passing references to R objects???
     */
@@ -216,12 +227,12 @@ List DC_ADMM(mat X, mat A, mat Lambda, umat D, double tau, double mu, double rho
         MAT_TEMP.shed_col(j);
         INV_XTX.slice(j) = inv(MAT_TEMP + rho*eye(p-1, p-1));
     }
-    
+
     // cache matrix M
     mat M = ones(p,p) / p;
     for(int j = 0; j < p; ++j)
     {
-        M(0,j) = 0;
+        M(0,j) = 0.0;
         M(j,j) = 2.0 / p;
     }
     for(int i = 0; i < p; ++i)
@@ -229,6 +240,24 @@ List DC_ADMM(mat X, mat A, mat Lambda, umat D, double tau, double mu, double rho
         M(i,0) = 1;
     }
     M = M / tau;
+    
+    // auto initialization of A, Lambda
+    if (auto_init == 1) 
+    {
+        for(int j = 0; j < p; ++j)
+        {
+            A.col(j) = XTX.col(j)/XTX(j,j);
+            A(j,j) = 0.0;
+
+            for(int i = 0; i < p; ++i)
+            {
+                if(fabs(A(i,j)) < 2*tau)
+                {
+                    A(i,j) = 0.0;
+                }
+            }
+        }
+    }
 
     // DC loop begins
     umat W(p,p);
@@ -247,8 +276,12 @@ List DC_ADMM(mat X, mat A, mat Lambda, umat D, double tau, double mu, double rho
         }
     }
 
+    force_DAG(X, A, W, tau);
+    mat A_curr = A;
+    mat Lambda_curr = Lambda;
+
     // initial objective
-    double obj_curr = objective(X,A,W,D,mu); 
+    double obj_curr = objective(X,A_curr,W,D,mu);
 
     for(int dc_iter = 0; dc_iter < dc_max_iter; ++dc_iter)
     {
@@ -426,23 +459,18 @@ List DC_ADMM(mat X, mat A, mat Lambda, umat D, double tau, double mu, double rho
         } // ADMM loop ends
 
         // enforce DAG constraints. refer to step 3 of algorithm 1 in the paper
-        force_DAG(A, W, tau);
-
-
-
-
-
-
-
-
+        force_DAG(X, A, W, tau);
 
         // DC stopping criteria
-        double obj_next = objective(X,A,W,D,mu);
-        if(obj_curr - obj_next < tol_abs)
+        double obj = objective(X,A,W,D,mu);
+        if(obj_curr - obj < tol_abs)
         {
             break;
         }
-        obj_curr = obj_next;
+
+        obj_curr = obj;
+        A_curr = A;
+        Lambda_curr = Lambda;
 
         // trace_obj
         if(trace_obj == 1)
@@ -453,6 +481,21 @@ List DC_ADMM(mat X, mat A, mat Lambda, umat D, double tau, double mu, double rho
     } // DC loop ends
 
     // return
-    return List::create(Named("A") = A, Named("Lambda") = Lambda);
+    return List::create(Named("A") = A_curr, Named("Lambda") = Lambda_curr);
 }
+
+
+/*
+estimate df
+*/
+
+
+
+
+
+
+
+
+
+
 
