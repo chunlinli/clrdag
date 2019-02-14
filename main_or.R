@@ -13,7 +13,7 @@ set.seed(2019)
 p=50
 n=1000
 # random graph: randomly generate adjacency matrix A, A lower triangular
-sparsity = 0.04
+sparsity = 2/p
 A = matrix(rbinom(p*p,1,sparsity)*sign(runif(p*p,min=-1,max=1)),p,p)
 A[upper.tri(A, diag = T)] = 0
 Sigma = solve(diag(p) - A)
