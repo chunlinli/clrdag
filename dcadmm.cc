@@ -1,7 +1,7 @@
 /*
 ref: Li, Shen, Pan "Likelihood inference for a large directed acyclic graph"
 author: Chunlin Li (li000007@umn.edu), Ziyue Zhu (zhux0502@umn.edu)
-version 0.19.02.09: DFS-cycle detection in algorithm is implemented for cpp function, auto initialization added
+version 0.19.02.16
 */
 
 #include <math.h>
@@ -116,7 +116,7 @@ int DFS_cycle(const mat &A, int start, int end)
 
 
 */
-void force_DAG(const mat &X, mat &A, umat &W, double tau)
+void force_DAG(const mat &XTX, mat &A, umat &W, double tau)
 {
     int p = (int) A.n_cols;
     mat AABS = abs(A);
@@ -173,12 +173,11 @@ void force_DAG(const mat &X, mat &A, umat &W, double tau)
     {
         uvec idx = find(W.row(i) == 0);
         int p_TEMP = (int) idx.size();
-        int n = (int) X.n_rows;
 
-        if(p_TEMP > 0 && p_TEMP <= n)
+        if(p_TEMP > 0)
         {
-            mat X_TEMP = X.cols(idx);
-            vec A_ROW_TEMP = solve(X_TEMP.t()*X_TEMP, X_TEMP.t()*X.col(i)); // can be simplfied using XTX
+            vec A_ROW_TEMP = XTX.col(i);
+            A_ROW_TEMP = solve(XTX(idx,idx)+1e-3*eye(p_TEMP,p_TEMP), A_ROW_TEMP(idx));
 
             for(int j = 0; j < p_TEMP; ++j)
             {
@@ -276,7 +275,7 @@ List DC_ADMM(mat X, mat A, mat Lambda, umat D, double tau, double mu, double rho
         }
     }
 
-    force_DAG(X, A, W, tau);
+    force_DAG(XTX, A, W, tau);
     mat A_curr = A;
     mat Lambda_curr = Lambda;
 
@@ -459,7 +458,7 @@ List DC_ADMM(mat X, mat A, mat Lambda, umat D, double tau, double mu, double rho
         } // ADMM loop ends
 
         // enforce DAG constraints. refer to step 3 of algorithm 1 in the paper
-        force_DAG(X, A, W, tau);
+        force_DAG(XTX, A, W, tau);
 
         // DC stopping criteria
         double obj = objective(X,A,W,D,mu);
