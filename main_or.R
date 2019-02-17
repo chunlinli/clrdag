@@ -1,7 +1,7 @@
 # 
 # @reference: Li, Shen, Pan "Likelihood ratio tests for a large directed acyclic graph"
 # @author: Chunlin Li (li000007@umn.edu), Ziyue Zhu (zhux0502@umn.edu)
-# @version: 0.18.12
+# @version: 0.18.12.19
 # 
 library(mvtnorm)
 source("clrdag.R")
