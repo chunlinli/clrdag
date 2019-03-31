@@ -8,7 +8,7 @@ This package requires compilation to install from source.
 
 1. Download ```clrdag_0.19.03.tar.gz``` in the ```pkg``` directory.
 
-2. In the Command Prompt, 
+2. In Command Prompt, 
 ```
 cd "path\\to\\download\\package\\" && R CMD INSTALL clrdag_0.19.03.tar.gz
 ```
