@@ -1,0 +1,3 @@
+useDynLib(clrdag, .registration=TRUE)
+importFrom(Rcpp, evalCpp)
+export(cmleDAG)
