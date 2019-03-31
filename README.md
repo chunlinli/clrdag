@@ -6,11 +6,11 @@ This package requires compilation to install from source.
 
 0. Make sure you have R (>= 3.5.3) and Rtools35 or later (available [here](https://cran.r-project.org/bin/windows/Rtools/)) properly installed. In R, install the packages ```Rcpp``` and ```RcppArmadillo```.
 
-1. Download ```clrdag_0.19.03.tar.gz``` in the ```pkg``` directory.
+1. Download ```clrdag_0.19.03.tar.gz``` in ```pkg``` directory.
 
 2. In Command Prompt, 
 ```
-cd "path\\to\\download\\package\\" && R CMD INSTALL clrdag_0.19.03.tar.gz
+cd "path\\to\\downloaded\\package\\" && R CMD INSTALL clrdag_0.19.03.tar.gz
 ```
 
 ### Unix(-like) users:
@@ -18,7 +18,7 @@ cd "path\\to\\download\\package\\" && R CMD INSTALL clrdag_0.19.03.tar.gz
 0. Make sure you have R (>= 3.5.3) and building tools installed. 
 In R, install the packages ```Rcpp``` and ```RcppArmadillo```.
 
-1. Download ```clrdag_0.19.03.tar.gz``` in the ```pkg``` directory.
+1. Download ```clrdag_0.19.03.tar.gz``` in ```pkg``` directory.
 
 2. In terminal, 
 ```
