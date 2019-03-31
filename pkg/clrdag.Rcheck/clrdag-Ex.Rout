@@ -593,7 +593,7 @@ detaching ‘package:mvtnorm’
 
 > options(digits = 7L)
 > base::cat("Time elapsed: ", proc.time() - base::get("ptime", pos = 'CheckExEnv'),"\n")
-Time elapsed:  19.894 0.948 19.617 0 0 
+Time elapsed:  18.051 0.919 17.722 0 0 
 > grDevices::dev.off()
 null device 
           1 

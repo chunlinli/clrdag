@@ -8,7 +8,9 @@ cmleDAG
 A function computes the MLE/likelihood ratio of a Gaussian directed acyclic graph with specified constraints.
 }
 \usage{
-cmleDAG(X, A = NULL, Lambda = NULL, D = NULL, tau, mu, rho, tol_abs = 1e-04, tol_rel = 1e-04, dc_max_iter = 20, admm_max_iter = 1000, test_path = FALSE, trace_obj = TRUE)
+cmleDAG(X, A = NULL, Lambda = NULL, D = NULL, tau, mu, rho, 
+        tol_abs = 1e-04, tol_rel = 1e-04, dc_max_iter = 20, 
+        admm_max_iter = 1000, test_path = FALSE, trace_obj = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

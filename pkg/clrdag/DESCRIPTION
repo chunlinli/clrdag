@@ -2,7 +2,7 @@ Package: clrdag
 Type: Package
 Title: Likelihood ratio tests of a large directed acyclic graph
 Version: 0.19.03
-Date: 2019-03-30
+Date: 2019-03-31
 Author: Chunlin Li, Xiaotong Shen, and Wei Pan
 Maintainer: Chunlin Li <li000007@umn.edu>
 Depends: R (>= 3.5.3)

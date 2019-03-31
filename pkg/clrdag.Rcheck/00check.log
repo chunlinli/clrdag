@@ -35,7 +35,7 @@
 * checking foreign function calls ... OK
 * checking R code for possible problems ... OK
 * checking Rd files ... NOTE
-prepare_Rd: cmleDAG.Rd:52-58: Dropping empty section \value
+prepare_Rd: cmleDAG.Rd:54-60: Dropping empty section \value
 * checking Rd metadata ... OK
 * checking Rd cross-references ... OK
 * checking for missing documentation entries ... OK
