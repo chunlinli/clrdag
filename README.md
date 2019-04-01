@@ -36,6 +36,6 @@ The reference for the details is
 
 Li, C., Shen, X., and Pan, W. (2019). Likelihood ratio tests of a large directed acyclic graph. Submitted. 
 
-The program was originally written by me in Summer 2018. Then Ziyue Zhu (thanks to her!) and I refactored the R code version (available [here](https://github.umn.edu/li000007/clrdag_r/)) in December 2018 as part of the final project for the optimization course EE5239. The R package is still being developed.
+The program was originally written by me in Summer 2018. Then Ziyue Zhu (thanks to her!) and I refactored the R code version (available [here](https://github.umn.edu/li000007/clrdag_r/)) in December 2018 as part of the final project for the optimization course EE5239. The R package is not published and is still being developed.
 
 To report an issue, please create an issue or contact me (li000007@umn.edu).
