@@ -1,8 +1,8 @@
 Package: clrdag
 Type: Package
 Title: Likelihood ratio tests of a large directed acyclic graph
-Version: 0.19.03
-Date: 2019-03-31
+Version: 0.19.04
+Date: 2019-04-03
 Author: Chunlin Li, Xiaotong Shen, and Wei Pan
 Maintainer: Chunlin Li <li000007@umn.edu>
 Depends: R (>= 3.5.3)
@@ -13,5 +13,5 @@ Description: The 'clrdag' package provides R functions for constrained likelihoo
 License: GPL (>= 2)
 BugReports: https://github.umn.edu/li000007/clrdag/issues
 NeedsCompilation: yes
-Packaged: 2019-03-31 17:53:24 UTC; li000007
-Built: R 3.5.3; x86_64-pc-linux-gnu; 2019-03-31 17:53:35 UTC; unix
+Packaged: 2019-04-03 17:59:13 UTC; li000007
+Built: R 3.5.3; x86_64-pc-linux-gnu; 2019-04-03 17:59:25 UTC; unix

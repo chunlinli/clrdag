@@ -4,7 +4,7 @@
 * using session charset: UTF-8
 * checking for file ‘clrdag/DESCRIPTION’ ... OK
 * checking extension type ... Package
-* this is package ‘clrdag’ version ‘0.19.03’
+* this is package ‘clrdag’ version ‘0.19.04’
 * checking package namespace information ... OK
 * checking package dependencies ... OK
 * checking if this is a source package ... OK
@@ -34,8 +34,7 @@
 * checking replacement functions ... OK
 * checking foreign function calls ... OK
 * checking R code for possible problems ... OK
-* checking Rd files ... NOTE
-prepare_Rd: cmleDAG.Rd:54-60: Dropping empty section \value
+* checking Rd files ... OK
 * checking Rd metadata ... OK
 * checking Rd cross-references ... OK
 * checking for missing documentation entries ... OK
@@ -52,4 +51,4 @@ prepare_Rd: cmleDAG.Rd:54-60: Dropping empty section \value
 * checking examples ... OK
 * checking PDF version of manual ... OK
 * DONE
-Status: 1 NOTE
+Status: OK

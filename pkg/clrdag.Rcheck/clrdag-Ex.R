@@ -35,7 +35,7 @@ X <- rmvnorm(n,mean=rep(0,p), sigma=Sigma, method="chol")
 out <- cmleDAG(X=X,tau=0.3,mu=1,rho=1.2,trace_obj=FALSE) # compute the MLE
 B <- out$A
 B <- ifelse(abs(B)>0.3,1,0)
-B == abs(A)
+all(B == abs(A))
 ##
 ## Example 2: hub graph
 ##
@@ -52,7 +52,7 @@ X <- rmvnorm(n,mean=rep(0,p), sigma=Sigma, method="chol")
 out <- cmleDAG(X=X,tau=0.3,mu=1,rho=1.2,trace_obj=FALSE) # compute the MLE
 B <- out$A
 B <- ifelse(abs(B)>0.3,1,0)
-B == abs(A)
+all(B == abs(A))
 
 
 

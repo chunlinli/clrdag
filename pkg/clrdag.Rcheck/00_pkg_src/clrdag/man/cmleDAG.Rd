@@ -52,11 +52,12 @@ cmleDAG(X, A = NULL, Lambda = NULL, D = NULL, tau, mu, rho,
 }
 
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
+  The function returns a LIST containing the following components. 
+  \item{X}{The input data matrix.}
+  \item{A}{The final estimate of adjacency matrix.}
+  \item{Lambda}{The final estimate of dual variables in the acyclicity condition.}
+  \item{mu}{The input sparsity parameter.}
+  \item{tau}{The input threshold parameter in TLP.}
 }
 \references{
   Li, C., Shen, X., and Pan, W. (2019). Likelihood ratio tests of a large directed acyclic graph.
@@ -86,7 +87,7 @@ X <- rmvnorm(n,mean=rep(0,p), sigma=Sigma, method="chol")
 out <- cmleDAG(X=X,tau=0.3,mu=1,rho=1.2,trace_obj=FALSE) # compute the MLE
 B <- out$A
 B <- ifelse(abs(B)>0.3,1,0)
-B == abs(A)
+all(B == abs(A))
 ##
 ## Example 2: hub graph
 ##
@@ -103,7 +104,7 @@ X <- rmvnorm(n,mean=rep(0,p), sigma=Sigma, method="chol")
 out <- cmleDAG(X=X,tau=0.3,mu=1,rho=1.2,trace_obj=FALSE) # compute the MLE
 B <- out$A
 B <- ifelse(abs(B)>0.3,1,0)
-B == abs(A)
+all(B == abs(A))
 }
 
 % Add one or more standard keywords, see file 'KEYWORDS' in the
