@@ -1,7 +1,7 @@
 ## 
 ## reference: Li, Shen, Pan "Likelihood ratio tests for a large directed acyclic graph"
 ## author: Chunlin Li (li000007@umn.edu)
-## version: 0.19.03: cpp functions are updated, auto initialization added
+## version: 0.19.04: cpp functions are parallelized
 ## 
 
 ## depends on libraries: Rcpp, RcppArmadillo
