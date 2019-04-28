@@ -1,16 +1,16 @@
 \name{clrdag}
 \alias{clrdag}
-\alias{cmleDAG}
+\alias{MLEdag}
 \title{
-cmleDAG
+MLEdag
 }
 \description{
-A function computes the MLE/likelihood ratio of a Gaussian directed acyclic graph with specified constraints.
+A function computes the MLE/LRT of a Gaussian directed acyclic graph with specified constraints.
 }
 \usage{
-cmleDAG(X, A = NULL, Lambda = NULL, D = NULL, tau, mu, rho, 
-        tol_abs = 1e-04, tol_rel = 1e-04, dc_max_iter = 20, 
-        admm_max_iter = 1000, test_path = FALSE, trace_obj = TRUE)
+MLEdag(X, A = NULL, Lambda = NULL, D = NULL, tau, mu, rho, 
+        tol_abs = 1e-04, tol_rel = 1e-04, 
+        dc_max_iter = 20, admm_max_iter = 1000, trace_obj = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -43,9 +43,9 @@ cmleDAG(X, A = NULL, Lambda = NULL, D = NULL, tau, mu, rho,
   \item{dc_max_iter, admm_max_iter}{
     Positive integer. The maximum iteration number of DC and ADMM. 
 }
-  \item{test_path}{
-    Logical. If TRUE, the path test is used. 
-}
+%  \item{test_path}{
+%    Logical. If TRUE, the path test is used. 
+%}
   \item{trace_obj}{
     Logical. If TRUE, the objective values are printed after each iteration. 
 }
@@ -70,7 +70,7 @@ Chunlin Li
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \examples{
-library(mvtnorm)
+## library(mvtnorm)
 ##
 ## Example 1: random graph
 ##
@@ -81,10 +81,11 @@ n<-1000
 sparsity <- 2/p
 A <- matrix(rbinom(p*p,1,sparsity)*sign(runif(p*p,min=-1,max=1)),p,p)
 A[upper.tri(A, diag = TRUE)] <- 0
-Sigma <- solve(diag(p) - A)
-Sigma <- Sigma \%*\% t(Sigma)
-X <- rmvnorm(n,mean=rep(0,p), sigma=Sigma, method="chol") 
-out <- cmleDAG(X=X,tau=0.3,mu=1,rho=1.2,trace_obj=FALSE) # compute the MLE
+#Sigma <- solve(diag(p) - A)
+#Sigma <- Sigma \%*\% t(Sigma)
+#X <- rmvnorm(n,mean=rep(0,p), sigma=Sigma, method="chol") 
+X <- matrix(rnorm(n*p), n, p) \%*\% t(solve(diag(p) - A))
+out <- MLEdag(X=X,tau=0.3,mu=1,rho=1.2,trace_obj=FALSE) # compute the MLE
 B <- out$A
 B <- ifelse(abs(B)>0.3,1,0)
 all(B == abs(A))
@@ -98,10 +99,11 @@ n<-1000
 A <- matrix(0,p,p)
 A[,1] <- sign(runif(p,min=-1,max=1))
 A[1,1] <- 0
-Sigma <- solve(diag(p) - A)
-Sigma <- Sigma \%*\% t(Sigma)
-X <- rmvnorm(n,mean=rep(0,p), sigma=Sigma, method="chol") 
-out <- cmleDAG(X=X,tau=0.3,mu=1,rho=1.2,trace_obj=FALSE) # compute the MLE
+#Sigma <- solve(diag(p) - A)
+#Sigma <- Sigma \%*\% t(Sigma)
+#X <- rmvnorm(n,mean=rep(0,p), sigma=Sigma, method="chol") 
+X <- matrix(rnorm(n*p), n, p) \%*\% t(solve(diag(p) - A))
+out <- MLEdag(X=X,tau=0.3,mu=1,rho=1.2,trace_obj=FALSE) # compute the MLE
 B <- out$A
 B <- ifelse(abs(B)>0.3,1,0)
 all(B == abs(A))

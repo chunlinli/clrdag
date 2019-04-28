@@ -1,7 +1,7 @@
 /*
 ref: Li, Shen, Pan "Likelihood inference for a large directed acyclic graph"
 author: Chunlin Li (li000007@umn.edu)
-version 0.19.04.26: work in parallel
+version 0.99.99: work in parallel, update auto initialization function
 */
 
 #include <omp.h>
@@ -14,14 +14,6 @@ using namespace arma;
 
 // [[Rcpp::depends(RcppArmadillo)]]
 
-/*
-obj: calculate the objective 
-X: data matrix
-A: adjacency matrix, A must be a DAG!!!
-W: weight matrix
-D: index of hypothesized edges, no penalty is imposed
-mu: sparsity par
-*/
 inline double SIGN(double x)
 {
     return (x < 0 ? (-1) : 1);
@@ -35,12 +27,13 @@ inline double MAX(double x, double y)
 /*
 obj: calculate the objective 
 X: data matrix
-A: adjacency matrix, A must be a DAG!!!
+A: adjacency matrix
 W: weight matrix
 D: index of hypothesized edges, no penalty is imposed
 mu: sparsity par
 */
-inline double objective(const mat &X, const mat &A, const umat &W, const umat &D, double mu)
+//inline double objective(const mat &X, const mat &A, const umat &W, const umat &D, double mu)
+inline double objective(const mat &X, const mat &A)
 {
     mat Y = X - X * A.t();
     return  0.5*accu(Y % Y) / X.n_rows;
@@ -48,9 +41,11 @@ inline double objective(const mat &X, const mat &A, const umat &W, const umat &D
 
 
 /*
-
-
-
+DFS_cycle: depth-first search for cycle detection
+           return 1 if the edge (start -> end) added to A forms a cycle 
+           return 0 otherwise
+A: adjacency matrix
+start, end: indices of starting nodes
 */
 int DFS_cycle(const mat &A, int start, int end)
 {
@@ -112,12 +107,14 @@ int DFS_cycle(const mat &A, int start, int end)
 
 
 /*
-
-
-
-
+force_DAG: truncate the minimum strength edges to satisfy the DAG constraint
+XTX: p by p matrix, t(X)*X
+A: adjacency matrix
+W: weight matrix
+D: p by p integer, index of hypothesized edges, no penalty is imposed
+tau: real, threshold par in TLP > 0
 */
-void force_DAG(const mat &XTX, mat &A, umat &W, double tau)
+void force_DAG(const mat &XTX, mat &A, umat &W, umat &D, double tau)
 {
     int p = (int) A.n_cols;
     mat AABS = abs(A);
@@ -127,11 +124,11 @@ void force_DAG(const mat &XTX, mat &A, umat &W, double tau)
     {
         for(int j = 0; j < p; ++j)
         {
-            if(AABS(i,j) < tau)
+            if(AABS(i,j) < tau && D(i,j) == 0)
             {
                 A(i,j) = 0.0;
-                W(i,j) = 1;
                 AABS(i,j) = INFINITY;
+                W(i,j) = 1;
             }
             else
             {
@@ -153,9 +150,10 @@ void force_DAG(const mat &XTX, mat &A, umat &W, double tau)
         if(DFS_cycle(A,start,end))
         {
             A(end,start) = 0.0;
+            W(end,start) = 1;
         }
     }
-
+/*
     #pragma omp parallel for
     for(int i = 0; i < p; ++i)
     {
@@ -171,12 +169,12 @@ void force_DAG(const mat &XTX, mat &A, umat &W, double tau)
             }
         }
     }
-
+*/
     // use OLS estimate 
     #pragma omp parallel for
     for(int i = 0; i < p; ++i)
     {
-        uvec idx = find(W.row(i) == 0);
+        uvec idx = find(A.row(i) != 0.0);
         int p_TEMP = (int) idx.size();
 
         if(p_TEMP > 0)
@@ -187,7 +185,7 @@ void force_DAG(const mat &XTX, mat &A, umat &W, double tau)
             for(int j = 0; j < p_TEMP; ++j)
             {
                 A(i,idx(j)) = A_ROW_TEMP(j);
-                if(fabs(A(i,idx(j))) < tau)
+                if(fabs(A(i,idx(j))) < tau && D(i,idx(j)) == 0)
                 {
                     A(i,idx(j)) = 0.0;
                     W(i,idx(j)) = 1;
@@ -258,7 +256,7 @@ List DC_ADMM(mat X, mat A, mat Lambda, umat D, double tau, double mu, double rho
 
             for(int i = 0; i < p; ++i)
             {
-                if(fabs(A(i,j)) < 2*tau)
+                if(fabs(A(i,j)) < 2*tau && D(i,j) == 0)
                 {
                     A(i,j) = 0.0;
                 }
@@ -273,7 +271,7 @@ List DC_ADMM(mat X, mat A, mat Lambda, umat D, double tau, double mu, double rho
     {
         for(int j = 0; j < p; ++j)
         {
-            if(fabs(A(i,j)) < tau)
+            if(fabs(A(i,j)) < tau && D(i,j) == 0)
             {
                 W(i,j) = 1;
             }
@@ -284,17 +282,22 @@ List DC_ADMM(mat X, mat A, mat Lambda, umat D, double tau, double mu, double rho
         }
     }
 
-    force_DAG(XTX, A, W, tau);
+    force_DAG(XTX, A, W, D, tau);
     mat A_curr = A;
     mat Lambda_curr = Lambda;
 
     // initial objective
-    double obj_curr = objective(X,A_curr,W,D,mu);
+    double obj_curr = objective(X,A_curr);
 
     for(int dc_iter = 0; dc_iter < dc_max_iter; ++dc_iter)
     {
+        // trace_obj
+        if(trace_obj == 1)
+        {
+            Rcout << "DC iteration: " << dc_iter << ", objective value: " << obj_curr << endl;
+        }
 
-        // ADMM loop begins
+        // ADMM loop begins: for details consult the reference or vignette
         mat B = A;
         cube Xi = zeros(p,p,p);
         cube Y = zeros(p,p,p);
@@ -472,10 +475,10 @@ List DC_ADMM(mat X, mat A, mat Lambda, umat D, double tau, double mu, double rho
         } // ADMM loop ends
 
         // enforce DAG constraints. refer to step 3 of algorithm 1 in the paper
-        force_DAG(XTX, A, W, tau);
+        force_DAG(XTX, A, W, D, tau);
 
         // DC stopping criteria
-        double obj = objective(X,A,W,D,mu);
+        double obj = objective(X,A);
         if(obj_curr - obj < tol_abs)
         {
             break;
@@ -485,12 +488,6 @@ List DC_ADMM(mat X, mat A, mat Lambda, umat D, double tau, double mu, double rho
         A_curr = A;
         Lambda_curr = Lambda;
 
-        // trace_obj
-        if(trace_obj == 1)
-        {
-            Rcout << "DC iteration: " << dc_iter << ", objective value: " << obj_curr << endl;
-        }
-
     } // DC loop ends
 
     // return
@@ -499,16 +496,26 @@ List DC_ADMM(mat X, mat A, mat Lambda, umat D, double tau, double mu, double rho
 
 
 /*
-estimate df
+test_DF: estimate degrees of freedom of testing
+A: adjacency matrix
+D: p by p integer, index of hypothesized edges, no penalty is imposed
 */
+// // [[Rcpp::export]]
+/*
+int test_DF(mat A, umat D) 
+{
+    int p = (int) A.n_cols;
+    int df = 0;
 
+    for(int i = 0; i < p; ++i)
+    {
+        for(int j = 0; j < p; ++j)
+        {
+            if(D(i,j) == 1)
+                df++;
+        }
+    }
 
-
-
-
-
-
-
-
-
-
+    return df;
+}
+*/

@@ -1,15 +1,14 @@
 Package: clrdag
 Type: Package
 Title: Likelihood ratio tests of a large directed acyclic graph
-Version: 0.19.04
-Date: 2019-04-03
-Author: Chunlin Li, Xiaotong Shen, and Wei Pan
+Version: 1.00.00
+Date: 2019-04-29
+Author: Chunlin Li
 Maintainer: Chunlin Li <li000007@umn.edu>
-Depends: R (>= 3.5.3)
+Depends: R (>= 3.6.0)
 Imports: Rcpp (>= 1.0.1)
 LinkingTo: Rcpp, RcppArmadillo
-Suggests: mvtnorm
-Description: The 'clrdag' package provides R functions for constrained likelihood ratio tests of a large directed acyclic graph. Documentation about 'clrdag' is provided by the vignette included in this package and via the paper by Li, Shen, and Pan (2019). 
+Description: The 'clrdag' package provides R functions for constrained maximum likelihood estimate and likelihood ratio test of a large directed acyclic graph. Documentation about 'clrdag' is provided by the vignette included in this package and via the paper by Li, Shen, and Pan (2019). 
 License: GPL (>= 2)
+URL: https://github.umn.edu/li000007/clrdag
 BugReports: https://github.umn.edu/li000007/clrdag/issues
-

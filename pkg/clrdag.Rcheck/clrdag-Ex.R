@@ -6,19 +6,19 @@ library('clrdag')
 base::assign(".oldSearch", base::search(), pos = 'CheckExEnv')
 base::assign(".old_wd", base::getwd(), pos = 'CheckExEnv')
 cleanEx()
-nameEx("cmleDAG")
-### * cmleDAG
+nameEx("MLEdag")
+### * MLEdag
 
 flush(stderr()); flush(stdout())
 
 ### Name: clrdag
-### Title: cmleDAG
-### Aliases: clrdag cmleDAG
+### Title: MLEdag
+### Aliases: clrdag MLEdag
 ### Keywords: MLE Likelihood ratio test Directed acyclic graph
 
 ### ** Examples
 
-library(mvtnorm)
+## library(mvtnorm)
 ##
 ## Example 1: random graph
 ##
@@ -29,10 +29,11 @@ n<-1000
 sparsity <- 2/p
 A <- matrix(rbinom(p*p,1,sparsity)*sign(runif(p*p,min=-1,max=1)),p,p)
 A[upper.tri(A, diag = TRUE)] <- 0
-Sigma <- solve(diag(p) - A)
-Sigma <- Sigma %*% t(Sigma)
-X <- rmvnorm(n,mean=rep(0,p), sigma=Sigma, method="chol") 
-out <- cmleDAG(X=X,tau=0.3,mu=1,rho=1.2,trace_obj=FALSE) # compute the MLE
+#Sigma <- solve(diag(p) - A)
+#Sigma <- Sigma %*% t(Sigma)
+#X <- rmvnorm(n,mean=rep(0,p), sigma=Sigma, method="chol") 
+X <- matrix(rnorm(n*p), n, p) %*% t(solve(diag(p) - A))
+out <- MLEdag(X=X,tau=0.3,mu=1,rho=1.2,trace_obj=FALSE) # compute the MLE
 B <- out$A
 B <- ifelse(abs(B)>0.3,1,0)
 all(B == abs(A))
@@ -46,10 +47,11 @@ n<-1000
 A <- matrix(0,p,p)
 A[,1] <- sign(runif(p,min=-1,max=1))
 A[1,1] <- 0
-Sigma <- solve(diag(p) - A)
-Sigma <- Sigma %*% t(Sigma)
-X <- rmvnorm(n,mean=rep(0,p), sigma=Sigma, method="chol") 
-out <- cmleDAG(X=X,tau=0.3,mu=1,rho=1.2,trace_obj=FALSE) # compute the MLE
+#Sigma <- solve(diag(p) - A)
+#Sigma <- Sigma %*% t(Sigma)
+#X <- rmvnorm(n,mean=rep(0,p), sigma=Sigma, method="chol") 
+X <- matrix(rnorm(n*p), n, p) %*% t(solve(diag(p) - A))
+out <- MLEdag(X=X,tau=0.3,mu=1,rho=1.2,trace_obj=FALSE) # compute the MLE
 B <- out$A
 B <- ifelse(abs(B)>0.3,1,0)
 all(B == abs(A))

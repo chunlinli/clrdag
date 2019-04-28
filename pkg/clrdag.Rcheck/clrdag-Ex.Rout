@@ -1,5 +1,5 @@
 
-R version 3.5.3 (2019-03-11) -- "Great Truth"
+R version 3.6.0 (2019-04-26) -- "Planting of a Tree"
 Copyright (C) 2019 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
@@ -25,19 +25,19 @@ Type 'q()' to quit R.
 > base::assign(".oldSearch", base::search(), pos = 'CheckExEnv')
 > base::assign(".old_wd", base::getwd(), pos = 'CheckExEnv')
 > cleanEx()
-> nameEx("cmleDAG")
-> ### * cmleDAG
+> nameEx("MLEdag")
+> ### * MLEdag
 > 
 > flush(stderr()); flush(stdout())
 > 
 > ### Name: clrdag
-> ### Title: cmleDAG
-> ### Aliases: clrdag cmleDAG
+> ### Title: MLEdag
+> ### Aliases: clrdag MLEdag
 > ### Keywords: MLE Likelihood ratio test Directed acyclic graph
 > 
 > ### ** Examples
 > 
-> library(mvtnorm)
+> ## library(mvtnorm)
 > ##
 > ## Example 1: random graph
 > ##
@@ -48,10 +48,11 @@ Type 'q()' to quit R.
 > sparsity <- 2/p
 > A <- matrix(rbinom(p*p,1,sparsity)*sign(runif(p*p,min=-1,max=1)),p,p)
 > A[upper.tri(A, diag = TRUE)] <- 0
-> Sigma <- solve(diag(p) - A)
-> Sigma <- Sigma %*% t(Sigma)
-> X <- rmvnorm(n,mean=rep(0,p), sigma=Sigma, method="chol") 
-> out <- cmleDAG(X=X,tau=0.3,mu=1,rho=1.2,trace_obj=FALSE) # compute the MLE
+> #Sigma <- solve(diag(p) - A)
+> #Sigma <- Sigma %*% t(Sigma)
+> #X <- rmvnorm(n,mean=rep(0,p), sigma=Sigma, method="chol") 
+> X <- matrix(rnorm(n*p), n, p) %*% t(solve(diag(p) - A))
+> out <- MLEdag(X=X,tau=0.3,mu=1,rho=1.2,trace_obj=FALSE) # compute the MLE
 > B <- out$A
 > B <- ifelse(abs(B)>0.3,1,0)
 > all(B == abs(A))
@@ -66,10 +67,11 @@ Type 'q()' to quit R.
 > A <- matrix(0,p,p)
 > A[,1] <- sign(runif(p,min=-1,max=1))
 > A[1,1] <- 0
-> Sigma <- solve(diag(p) - A)
-> Sigma <- Sigma %*% t(Sigma)
-> X <- rmvnorm(n,mean=rep(0,p), sigma=Sigma, method="chol") 
-> out <- cmleDAG(X=X,tau=0.3,mu=1,rho=1.2,trace_obj=FALSE) # compute the MLE
+> #Sigma <- solve(diag(p) - A)
+> #Sigma <- Sigma %*% t(Sigma)
+> #X <- rmvnorm(n,mean=rep(0,p), sigma=Sigma, method="chol") 
+> X <- matrix(rnorm(n*p), n, p) %*% t(solve(diag(p) - A))
+> out <- MLEdag(X=X,tau=0.3,mu=1,rho=1.2,trace_obj=FALSE) # compute the MLE
 > B <- out$A
 > B <- ifelse(abs(B)>0.3,1,0)
 > all(B == abs(A))
@@ -80,12 +82,9 @@ Type 'q()' to quit R.
 > ### * <FOOTER>
 > ###
 > cleanEx()
-
-detaching ‘package:mvtnorm’
-
 > options(digits = 7L)
 > base::cat("Time elapsed: ", proc.time() - base::get("ptime", pos = 'CheckExEnv'),"\n")
-Time elapsed:  17.935 0.969 17.647 0 0 
+Time elapsed:  127.654 0.873 11.559 0 0 
 > grDevices::dev.off()
 null device 
           1 

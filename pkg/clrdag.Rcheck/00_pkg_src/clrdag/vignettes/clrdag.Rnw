@@ -1,0 +1,175 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,mathrsfs}
+
+\DeclareMathOperator*{\argmin}{arg\,min}
+\title{Structure Learning of a Directed Acyclic Graph}
+\author{Chunlin Li \and Ziyue Zhu}
+\date{April 28, 2019}
+
+% \VignetteIndexEntry{Structure Learning of a Directed Acyclic Graph: Design Document}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}\label{intro}
+The directed acyclic graph (DAG) model is useful in statistics, yet imposing a great challenge as the graph dimension grows. 
+The challenge is twofold: statistical guarantee and optimization. The former is addressed in \cite{yuan2018constrained,li2019likelihood}. 
+Here, we focus on the latter: to solve the related optimization problem efficiently. 
+
+However, the exact maximization of likelihood for Gaussian DAG is NP hard due to the combinatorial constraint \cite{zheng2018dags}. 
+To circumvent this computational intractability, a smooth relaxation strategy have been proposed by \cite{yuan2018constrained}.
+
+For a real matrix $W=(w_{ij}) \in \mathbb{R}^{d \times d}$, define the binary matrix $\mathcal{A}(W) \in \{0,1\}^{d \times d}$ by
+\begin{equation} \label{a1}
+[\mathcal{A}(W)]_{ij}=1 \Leftrightarrow w_{ij} \neq 0,
+\end{equation}
+and
+\begin{equation} \label{a2}
+[\mathcal{A}(W)]_{ij}=0 \Leftrightarrow w_{ij} = 0,
+\end{equation}
+which is the adjacency matrix of a directed graph $G(W)$. Also define the subset of binary matrices
+\begin{equation} \label{d}
+\mathbb{D}=\{B ~|~ B \in \{0,1\}^{d \times d} \text{and B is the adjacency matrix of an acyclic graph}\}.
+\end{equation}
+
+Given the data matrix $X \in \mathbb{R}^{n \times d}$, in high-dimensional statistics, 
+a sparsity penalization is often imposed,
+\begin{equation} \label{lsopt}
+\min_{\mathcal{A}(W)\in \mathbb{D}}\text{loss}(W;X) + \mu\text{pen}(W),
+\end{equation}
+where $\mu$ is a tuning parameter, 
+$\text{loss}(W;X)$ is some loss function based on the data matrix $X$ and $\text{pen}(W)$ is a penalty producing sparse pattern.
+
+Here, we focus on the least-squares (LS) loss, which is equivalent to maximum likelihood estimation in Gaussian model. 
+We replace $\text{loss}(W;X)$ in \eqref{lsopt} by
+\begin{equation} \label{ls}
+Q(W;X):=\frac{1}{2n}||X-XW||^2_F.
+\end{equation}
+
+\section{Algorithms: $\Lambda$-Score} \label{alg}
+
+In this section, we consider the problem \eqref{lsopt} with 
+\begin{equation}
+\text{pen}(W) = \sum_{i=1}^p \sum_{j=1}^p \frac{|w_{ij}|}{\tau} -\max\left(\frac{|w_{ij}|}{\tau}-1,0\right).
+\end{equation}
+
+To deal with the condition $\mathcal{A}(W)\in\mathbb{D}$, 
+Yuan et al. studied another continuous relaxation, which we refer to as the $\Lambda$-constraint. \\
+
+\noindent
+\textbf{Theorem 2} \cite{yuan2018constrained} \\
+The adjacency matrix $W\in \mathbb{R}^{d\times d}$ is a DAG if and only if there exists a matrix $\Lambda \in \mathbb{R}^{d\times d}$ such that the following constraints are satisfied by $W$, 
+\begin{equation}\label{lambdacon}
+\lambda_{ik} + I(j\neq k) - \lambda_{jk} \geq I(W_{ij} \neq 0), \quad i,j,k=1,\ldots,p, \ i\neq j,
+\end{equation}
+where $I(\cdot)$ denotes the indicator function. \\
+
+Based on Theorem 2, a \emph{difference convex} (DC) programming approach can be developed to iteratively relax the nonconvex constraints through a sequence of convex set approximations. 
+Then each convex subproblem is solved by an \emph{alternating direction method of multipliers} (ADMM) \cite{boyd2011distributed}.
+
+Specifically, decompose $\text{pen}_{\tau}$ into a difference of two convex functions, $\text{pen}_{\tau}(z) = |z|/\tau - \max(|z|/\tau - 1,0) \equiv S_1(z) - S_2(z)$. 
+On this ground, a convex approximation at $(t+1)$-th iteration is constructed by replacing $S_2(z)$ with its affine majorization $S_2(z_t) + \nabla S_2(z_t)^T (z - z_t)$ at the solution $z_t$ at $t$-th iteration, 
+where $\nabla S_2(z_t) = {\tau}^{-1}{\text{sign}(z_t)}I(|z_t|>\tau)$ is a subgradient of $S_2$ at $z_t$. 
+This leads to a convex subproblem at the $(t+1)$-th iteration,
+\begin{equation}\label{convexrel}
+\begin{split}
+&\min_{(W,\Lambda)\in\mathbb{R}^{d\times d}\times\mathbb{R}^{d\times d} }   Q(W;X) + \mu \tau^{-1} | B \circ W |_{1},  \\
+& \quad \quad \text{s.t.} \quad  \lambda_{jk} + I(i\neq k) - \lambda_{ik} \geq \tau^{-1} |W_{ij}| B_{ij} + (1 - B_{ij}),\\
+&\quad \quad \quad \quad i,j,k = 1,\ldots,p, i\neq j,
+\end{split}
+\end{equation}
+where $B = B_t = H_{\tau}(W_t)$ and $H$ is the elementwise hard $\tau$-threshold function. 
+
+To solve \eqref{convexrel}, we separate the differentiable from non-differentiable parts there by introducing a decoupling matrix 
+$V$ for $W$, in addition to slack variables $\xi = ( \xi_{ijk} )_{p\times p \times p}$ to 
+convert inequality to equality constraints. This yields 
+\begin{equation}
+\begin{split}
+& \min_{(W,V,\Lambda,\xi)}  \quad Q(W;X) + \mu \tau^{-1} | B \circ V |_{1},  \\
+&\quad \text{s.t.}  \quad  W - V = 0, \\
+&\quad \quad \quad |V_{ij}| B_{ij} + \tau (1 - B_{ij}) + \xi_{ijk} - \tau\lambda_{jk} - \tau I(i\neq k) + \tau \lambda_{ik} = 0,  \\
+&\quad \quad \quad \xi_{ijk} \geq 0, \quad i,j,k = 1,\ldots,p, i\neq j.
+\end{split}
+\end{equation}
+
+It seems unclear whether the second constraint \eqref{lambdacon} can be handled by the proximal operator. 
+Alternatively, we follow \cite{boyd2011distributed} and introduce scaled dual variables $\alpha = ( \alpha_{ijk} )_{p\times p\times p}$ and $Z = (z_{ij})_{p\times p}$. 
+This leads to an augmented Lagrangian,
+\begin{equation}
+\begin{split}
+& L^{\rho}(W,V,\Lambda,\xi,\alpha,Z) = Q(W;X) + \mu \tau^{-1} | B \circ V |_{1} + \frac{\rho}{2} \|W-V+Z\|_F^2 \\
+& + \frac{\rho}{2} \sum_{k} \sum_{i\neq j}  \left( |V_{ij}|B_{ij} + \tau (1-B_{ij}) + \xi_{ijk} - \tau \lambda_{jk} - \tau I(i\neq k) + \tau \lambda_{ik} + \alpha_{ijk} \right)^2,
+\end{split}
+\end{equation}
+where the minimization is solved iteratively. 
+Specifically, at $(s+1)$-th iteration of ADMM, update the following steps:
+\begin{equation}\label{admm}
+\begin{split}
+W_{s+1} &= \argmin_{ W} L^{\rho}(W, V_s, \Lambda_s, \xi_s, \alpha_s, Z_s), \\
+V_{s+1} &= \argmin_{ V} L^{\rho}(W_{s+1}, V, \Lambda_s,\xi_s, \alpha_s, Z_s),\\
+\Lambda_{s+1} &=  \argmin_{ \Lambda} L^{\rho}( W_{s+1}, V_{s+1}, \Lambda, \xi_s, \alpha_s, Z_s),  \\
+\xi_{s+1} &= \argmin_{ \xi_{ijk} \geq 0} L^{\rho}(W_{s+1}, V_{s+1}, \Lambda_{s+1}, \xi, \alpha_s, Z_s),  \\
+(\alpha_{s+1})_{ijk} &= \left((\alpha_s)_{ijk} + |(V_s)_{ij}|B_{ij} + \tau (1-B_{ij}) + (\xi_s)_{ijk} - \tau(\lambda_s)_{ik} - \tau I(j\neq k) + \tau (\lambda_s)_{jk}\right)^+,\\
+Z_{s+1} &= Z_{s} + W_{s+1} - V_{s+1}.
+\end{split}
+\end{equation}
+
+The ADMM updating scheme has analytic formulas which greatly facilitate computation. \\
+
+\noindent
+\textbf{$\Lambda$-Scoring Method } \cite{yuan2018constrained,li2019likelihood} \\
+Initiate an estimate $(W_0, \Lambda_0)$ satisfying \eqref{lambdacon}. Set $B_0 = H_{\tau}(W_0)$ and set the optimization accuracy $\epsilon > 0$, for $t=1,\ldots,\infty$,\\
+(a) Compute $(W_t,\Lambda_t)$ by ADMM \eqref{admm}. Set $B_t = H_{\tau}(W_t)$. \\
+(b) If $B_t$ has a cycle, for each $|(W_t)_{ij}|>0$ in increasing order, if $(i,j)$ is in a cycle, 
+\[ (W_t)_{ij} \leftarrow 0, \quad (B_t)_{ij}\leftarrow 0.  \]
+
+\noindent
+\textbf{Remark} 
+(1) For the convergence of ADMM, we use the stopping criteria (3.12) of \cite{boyd2011distributed}. 
+(2) The step (b) is implemented in addition to the original algorithm of \cite{yuan2018constrained}, 
+which ensures that $W_{t}$ satisfies the acyclicity condition by removing the weakest edge in an existing cycle, 
+hence that it yields a DAG. Based on our limited numerical experience \cite{li2019likelihood}, 
+this modification enhances the overall performance in structure learning. 
+In (b), the cycle detection algorithm is based on the \emph{depth-first search} \cite{cormen2001introduction}. 
+
+\section{Score-based Inference} \label{inference}
+
+For the developement of inference theory, see \cite{li2019likelihood}.
+
+
+\bibliographystyle{amsplain}
+\begin{thebibliography}{10}
+
+\bibitem{boyd2011distributed}
+Boyd, S., Parikh, N., Chu, E., Peleato, B., \& Eckstein, J. (2011). 
+Distributed optimization and statistical learning via the alternating direction method of multipliers. 
+\emph{Foundations and Trends in Machine learning}, 3(1), 1-122.
+
+\bibitem{cormen2001introduction}
+Cormen, T. H., Leiserson, C. E., Rivest, R. L., \& Stein, C. (2001). \emph{Introduction to Algorithms}. MIT press.
+
+\bibitem{li2019likelihood}
+Li, C., Shen, X., \& Pan, W. (2019) Likelihood ratio tests of a large directed acyclic graph. Submitted.
+
+\bibitem{shen2012likelihood}
+Shen, X., Pan, W., \& Zhu, Y. (2012). 
+Likelihood-based selection and sharp parameter estimation. 
+\emph{Journal of the American Statistical Association}, 107(497), 223-232.
+
+\bibitem{yuan2018constrained}
+Yuan, Y., Shen, X., Pan, W., \& Wang, Z. (2018). 
+Constrained likelihood for reconstructing a directed acyclic Gaussian graph. 
+\emph{Biometrika}, 106(1), 109-125.
+
+\bibitem{zheng2018dags}
+Zheng, X., Aragam, B., Ravikumar, P. K., \& Xing, E. P. (2018). 
+DAGs with NO TEARS: Continuous optimization for structure learning. 
+\emph{Advances in Neural Information Processing Systems}, pp. 9472-9483.
+
+
+
+
+
+\end{thebibliography}
+\end{document}
