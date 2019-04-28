@@ -12,6 +12,7 @@ This package requires compilation to install from source. The following instruct
 ```
 cd "path\\to\\downloaded\\package\\" && R CMD INSTALL clrdag_*.tar.gz
 ```
+3. Delete ```clrdag_*.tar.gz```.
 
 ### Unix(-like) users:
 
@@ -20,10 +21,11 @@ In R, install the packages ```Rcpp``` and ```RcppArmadillo```.
 
 1. Download ```clrdag_*.tar.gz``` from ```pkg``` directory.
 
-2. In terminal, 
+2. In terminal (Bash), 
 ```
 cd "path/to/downloaded/package/" && R CMD INSTALL clrdag_*.tar.gz
 ```
+3. Remove ```clrdag_*.tar.gz```.
 
 ## To-dos in future versions
 
@@ -36,6 +38,6 @@ The reference for the details is
 
 Li, C., Shen, X., and Pan, W. (2019). Likelihood ratio tests of a large directed acyclic graph. Submitted. 
 
-The program was originally written by me in Summer 2018. Then Ziyue Zhu (thanks to her!) and I refactored the R code version (available [here](https://github.umn.edu/li000007/clrdag_r/)) in December 2018 as part of the final project for the optimization course EE5239. The R package is not published and is still being developed.
+The program was originally written by me in Summer 2018. Then Ziyue Zhu (thanks to her!) and I refactored the R code version (available [here](https://github.umn.edu/li000007/clrdag_r/)) in December 2018 as part of the final project for the optimization course EE5239. As of April 2019, this R package can be accessed by UMN students. It is not yet published and is still in development.
 
-To report an issue, please create an issue or contact me (li000007@umn.edu).
+To report an issue, please file an issue at [here](https://github.umn.edu/li000007/clrdag/issues).
