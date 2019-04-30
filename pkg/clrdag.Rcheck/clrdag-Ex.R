@@ -1,6 +1,18 @@
 pkgname <- "clrdag"
 source(file.path(R.home("share"), "R", "examples-header.R"))
 options(warn = 1)
+base::assign(".ExTimings", "clrdag-Ex.timings", pos = 'CheckExEnv')
+base::cat("name\tuser\tsystem\telapsed\n", file=base::get(".ExTimings", pos = 'CheckExEnv'))
+base::assign(".format_ptime",
+function(x) {
+  if(!is.na(x[4L])) x[1L] <- x[1L] + x[4L]
+  if(!is.na(x[5L])) x[2L] <- x[2L] + x[5L]
+  options(OutDec = '.')
+  format(x[1L:3L], digits = 7L)
+},
+pos = 'CheckExEnv')
+
+### * </HEADER>
 library('clrdag')
 
 base::assign(".oldSearch", base::search(), pos = 'CheckExEnv')
@@ -11,6 +23,7 @@ nameEx("MLEdag")
 
 flush(stderr()); flush(stdout())
 
+base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 ### Name: clrdag
 ### Title: MLEdag
 ### Aliases: clrdag MLEdag
@@ -23,7 +36,7 @@ flush(stderr()); flush(stdout())
 ## Example 1: random graph
 ##
 set.seed(2019)
-p<-50
+p<-10
 n<-1000
 ## random graph: randomly generate adjacency matrix A, A lower triangular
 sparsity <- 2/p
@@ -41,7 +54,7 @@ all(B == abs(A))
 ## Example 2: hub graph
 ##
 set.seed(2019)
-p<-50
+p<-10
 n<-1000
 ## hub graph: randomly generate adjacency matrix A, A lower triangular
 A <- matrix(0,p,p)
@@ -58,6 +71,8 @@ all(B == abs(A))
 
 
 
+base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+base::cat("MLEdag", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 ### * <FOOTER>
 ###
 cleanEx()

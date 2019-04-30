@@ -75,15 +75,21 @@ MLEdag <- function(X, A = NULL, Lambda = NULL, D = NULL, tau, mu, rho,
         A0 <- matrix(0, p, p)
         for (i in 1:p)
         {
+            idx <- which(A[i,] != 0)
+            if (length(idx) > 0)
+            {
+                A[i,idx] <- solve(XTX[idx,idx] + 1e-4*diag(length(idx))) %*% XTX[idx,i]
+            }
+
             idx <- which(A[i,] != 0 & D[i,] == 0)
             if (length(idx) > 0)
             {
-                A0[i,idx] <- solve(XTX[idx,idx]) %*% XTX[idx,i]
+                A0[i,idx] <- solve(XTX[idx,idx] + 1e-4*diag(length(idx))) %*% XTX[idx,i]
             }
         }
-        lrt <- max((p*n - sum(A))*(1 - sum((X %*% (diag(p) - t(A)))^2)/sum((X %*% (diag(p) - t(A0)))^2)),0)
-        pval <- ifelse(df < 30, pchisq(lrt, df, lower.tail = FALSE),
+        lrt <- max((p*n - sum(A0 != 0))*(1 - sum((X %*% (diag(p) - t(A)))^2)/sum((X %*% (diag(p) - t(A0)))^2)),0)
+        pval <- ifelse(df < 50, pchisq(lrt, df, lower.tail = FALSE),
                                 pnorm((lrt - df) / sqrt(2*df), lower.tail = FALSE))
-        return(list(X = X, A = A, Lambda = Lambda, D = D, tau = tau, mu = mu, lrt = lrt, df = df, pval = pval))
+        return(list(X = X, A.H1 = A, A.H0 = A0, Lambda.H1 = Lambda, D = D, tau = tau, mu = mu, lrt = lrt, df = df, pval = pval))
     }
 }

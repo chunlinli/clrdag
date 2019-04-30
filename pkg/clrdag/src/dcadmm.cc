@@ -180,7 +180,7 @@ void force_DAG(const mat &XTX, mat &A, umat &W, umat &D, double tau)
         if(p_TEMP > 0)
         {
             vec A_ROW_TEMP = XTX.col(i);
-            A_ROW_TEMP = solve(XTX(idx,idx)+1e-3*eye(p_TEMP,p_TEMP), A_ROW_TEMP(idx));
+            A_ROW_TEMP = solve(XTX(idx,idx)+1e-4*eye(p_TEMP,p_TEMP), A_ROW_TEMP(idx));
 
             for(int j = 0; j < p_TEMP; ++j)
             {

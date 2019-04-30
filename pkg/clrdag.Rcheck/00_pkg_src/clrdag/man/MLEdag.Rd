@@ -75,7 +75,7 @@ Chunlin Li
 ## Example 1: random graph
 ##
 set.seed(2019)
-p<-50
+p<-10
 n<-1000
 ## random graph: randomly generate adjacency matrix A, A lower triangular
 sparsity <- 2/p
@@ -93,7 +93,7 @@ all(B == abs(A))
 ## Example 2: hub graph
 ##
 set.seed(2019)
-p<-50
+p<-10
 n<-1000
 ## hub graph: randomly generate adjacency matrix A, A lower triangular
 A <- matrix(0,p,p)
