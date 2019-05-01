@@ -140,7 +140,7 @@ void force_DAG(const mat &XTX, mat &A, umat &W, umat &D, double tau)
     uvec idx = sort_index(AABS);
     for(int i = 0; i < p*p; ++i)
     {
-        if(isinf(AABS(idx(i))))
+        if(std::isinf(AABS(idx(i))))
         {
             break;
         }
