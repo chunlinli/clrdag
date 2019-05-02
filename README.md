@@ -63,6 +63,6 @@ This is a C++/R implementation of the constrained likelihood ratio tests of a DA
 
 Li, C., Shen, X., and Pan, W. (2019). Likelihood ratio tests of a large directed acyclic graph. Submitted. 
 
-The program was originally written in July 2018. Then Ziyue Zhu (thanks to her!) and I refactored the R code version (available at [here](https://github.umn.edu/li000007/clrdag_r/)) in December 2018 as part of the final project for the optimization course EE 5239. As of April 2019, this R package can be accessed at UMN. It is still in development and be cautious.
+The program was originally written in July 2018. Then Ziyue Zhu (thanks to her!) and I refactored the R code version (available at [here](https://github.umn.edu/li000007/clrdag_r/)) in December 2018 as part of the final project for the optimization course EE 5239. As of May 1, 2019, this R package is publicly available. It is still in development and be cautious.
 
 To report an issue, please file an issue at [here](https://github.com/chunlinli/clrdag/issues).
