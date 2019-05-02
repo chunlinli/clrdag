@@ -1,0 +1,201 @@
+---
+title: "DAG learning with R package `clrdag`"
+author: "Chunlin Li"
+institute: School of Statistics, University of Minnesota
+date: "April 29th, 2019"
+output: beamer_presentation
+header-includes:
+- \usepackage{amssymb,amsmath}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## DAG learning 
+
+Structual equations model:
+    $$ X_k = \sum_{j\in \text{pa}_k} A_{jk} X_j + \varepsilon_k, \quad k = 1,\ldots,p, $$
+    where $A_{jk} \neq 0$ iff $j \in \text{pa}_k$ and $\varepsilon_k \overset{iid}{\sim} N(0,\sigma^2)$.
+
+\vskip .5cm
+    
+The iid errors $\varepsilon_k$ implies $A_{p\times p}$ is a (weighted) adjacency matrix of a \textcolor{red}{directed acyclic graph}. Denote $A\in\mathbb D$. 
+
+\vskip .5cm
+
+Assume $\mathbf X_i = (X_{i1},\ldots,X_{ip})$; $i=1,\ldots,n$ are iid observations. Let $\mathbb X_{n\times p} = (\mathbf X_1',\ldots,\mathbf X_n')'$.
+
+
+\vskip .5cm
+
+\textcolor{red}{Goal} Estimate and make inference on $A$.
+
+## Likelihood: original
+
+Constrained MLE: \textcolor{red}{difficult!} 
+$$ \max_{\textcolor{cyan}{A\in \mathbb D}} \quad  \ell(A) = \frac{1}{2} \| \mathbb X - \mathbb X A \|_F^2 + \textcolor{blue}{\mu\|A\|_{off,0}}.$$ 
+Relaxation? 
+
+
+
+
+
+
+## Likelihood: relaxation
+
+Iterative convex relaxation (DC)\footnote{The details are included in the paper and R package vignette.}:
+    
+\vskip .5cm
+
+\quad At $(t+1)$th step, $B^{[t]} = H_{\tau}(A^{[t]})$; $H_{\tau}$ is hard threshold.
+    \begin{equation*}
+        \begin{split}
+            (A^{[t+1]},\Lambda^{[t+1]}) = \arg\max \frac{1}{2} \| \mathbb X - \mathbb X A \|_F^2 + \textcolor{blue}{\mu \tau^{-1} \| B^{[t]} \circ A \|_{off,1}} \\
+            \text{s.t.} \ \textcolor{cyan}{\lambda_{jk} + \mathbb I(i\neq k) - \lambda_{ik} \geq \tau^{-1} |A_{ij}|B^{[t]}_{ij} + (1 - B^{[t]}_{ij}),}\\
+             \textcolor{cyan}{i,j,k = 1,\ldots,p;\quad i\neq j.}
+        \end{split}
+    \end{equation*}
+
+\quad Iterate until objective converges.
+
+
+
+## Computation
+
+Our implementation is based ADMM.
+
+\vskip .5cm
+
+\textcolor{red}{Algorithm} 
+Initiate $(A^{[0]}, \Lambda^{[0]})$ satisfying DAG constraint. 
+Set $B^{[0]} = H_{\tau}(A^{[0]})$. 
+
+Set the optimization accuracy $\epsilon > 0$, for $t=1,\ldots,\infty$
+\begin{enumerate}
+\item Compute $(A^{[t]},\Lambda^{[t]})$ by ADMM. Set $B^{[t]} = H_{\tau}(A^{[t]})$. 
+\item If $B^{[t]}$ has a cycle, for each $|A^{[t]}_{ij}|>0$ in increasing order, if $(i,j)$ is in a cycle, 
+\[ A^{[t]}_{ij} \leftarrow 0, \quad B^{[t]}_{ij}\leftarrow 0. \]
+\end{enumerate}
+
+
+
+
+
+## `clrdag`
+
+C++ and R (`Rcpp`) with OpenMP:
+\begin{itemize}
+\item Friendly API.
+\item Highly optimized linear algebra libraries (`Armadillo`).
+\end{itemize}
+
+\vskip .5cm
+
+Do one thing and do it well: `MLEdag`
+\begin{itemize}
+\item Compute MLE for DAG.
+\item Make likelihood inference on DAG edges.
+\end{itemize}
+
+
+## A toy example: setup
+
+\begin{itemize}
+  \item $p = 50, n = 1000$
+  \item Random DAG $A$ with connection probability $1/p$
+  \item Nonzero $A_{ij}$ are assigned Unif$[-1,-0.7]\cup[0.7,1]$
+  \item $\varepsilon_k \overset{iid}{\sim} N(0,1)$
+\end{itemize}
+
+## A toy example: $\|A\|_0 = 43$
+
+```{r, fig.height=4, fig.width=4}
+library(lattice)
+p <- 50; n <- 1000; sparsity <- 2/p
+set.seed(2018)
+idx <- sample(1:p)
+set.seed(2019)
+A <- matrix(rbinom(p*p,1,sparsity)*sign(runif(p*p,min=-1,max=1))*runif(p*p,min = 0.7, max = 1),p,p)
+A[upper.tri(A, diag = TRUE)] <- 0
+A <- A[idx,idx]
+A_plot <- levelplot(A, col.regions = colorRampPalette(c("blue", "white", "red"))(1e3),at=seq(min(-1.2), max(1.2), length.out=50))
+A_plot
+```
+
+
+## A toy example: code
+
+```{r}
+X <- matrix(rnorm(n*p), n, p) %*% t(solve(diag(p) - A))
+```
+
+```{r, echo=TRUE}
+library(clrdag)
+t <- proc.time()
+out <- MLEdag(X=X,tau=0.3,mu=1,rho=1.2)
+proc.time() - t
+```
+
+## A toy example: result
+
+$\|\hat{A} - A \|_F^2$: 
+```{r, echo=TRUE}
+sum((out$A - A)^2)
+```
+
+\vskip .5cm
+
+$\text{Hamming}(\mathcal G_{\hat A},\mathcal G_A)$:
+```{r, echo=TRUE}
+sum(abs((out$A != 0) - (A!=0)))
+```
+
+
+## Summary
+
+URL: [`https://github.umn.edu/li000007/clrdag`](https://github.umn.edu/li000007/clrdag)
+
+\vskip .5cm
+
+Due to time limit, the inference part is not presented.
+
+\vskip .5cm
+
+TODOs: 
+\begin{itemize}
+        \item \textcolor{red}{Cross-validation function}, diagnostic plots.
+        \item Publish on CRAN.
+\end{itemize}
+
+
+
+## Thank you
+
+References
+\begin{itemize}
+    \item Li, C., Shen, X., \& Pan, W. (2019). 
+    Likelihood ratio tests of a large directed acyclic graph. 
+    Submitted. 
+
+  \item Yuan, Y., Shen, X., Pan, W., \& Wang, Z. (2018). 
+  Constrained likelihood for reconstructing a directed acyclic Gaussian graph. 
+  \emph{Biometrika}, 106(1), 109-125.
+
+\end{itemize}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
