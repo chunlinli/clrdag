@@ -11,7 +11,8 @@ This package requires compilation to install from source. The following instruct
 2. In Command Prompt, 
 ```
 cd "path\\to\\clrdag.zip" 
-R CMD build clrdag && R CMD INSTALL clrdag_*.tar.gz
+R CMD build clrdag 
+R CMD INSTALL clrdag_*.tar.gz
 ```
 3. Delete ```clrdag``` folder, ```clrdag.zip```, and ```clrdag_*.tar.gz```.
 
@@ -25,11 +26,12 @@ In R, install the packages ```Rcpp``` and ```RcppArmadillo```.
 2. In terminal (Bash), 
 ```
 cd "path/to/clrdag.zip"
-R CMD build clrdag && R CMD INSTALL clrdag_*.tar.gz
+R CMD build clrdag 
+R CMD INSTALL clrdag_*.tar.gz
 ```
 3. Remove ```clrdag``` directory, ```clrdag.zip```, and ```clrdag_*.tar.gz```.
 
-## Examples
+## Example(s)
 
 Try the following example in R!
 
