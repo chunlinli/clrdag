@@ -35,9 +35,9 @@ Try the following example in R!
 library(clrdag)
 set.seed(2018)
 p <- 50; n <- 1000; sparsity <- 2/p
-idx <- sample(1:p)
 A <- matrix(rbinom(p*p,1,sparsity)*sign(runif(p*p,min=-1,max=1))*runif(p*p,min = 0.7, max = 1),p,p)
 A[upper.tri(A, diag = TRUE)] <- 0
+idx <- sample(1:p)
 A <- A[idx,idx]
 X <- matrix(rnorm(n*p), n, p) %*% t(solve(diag(p) - A))
 
