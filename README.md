@@ -39,18 +39,18 @@ Try the following example in R!
 library(clrdag)
 set.seed(2018)
 p <- 50; n <- 1000; sparsity <- 2/p
-A <- matrix(rbinom(p*p,1,sparsity)*sign(runif(p*p,min=-1,max=1))*runif(p*p,min = 0.7, max = 1),p,p)
-A[upper.tri(A, diag = TRUE)] <- 0
+A <- matrix(rbinom(p*p, 1, sparsity)*sign(runif(p*p, -1, 1))*runif(p*p, 0.7, 1), p, p)
+A[upper.tri(A, diag=TRUE)] <- 0
 idx <- sample(1:p)
 A <- A[idx,idx]
 X <- matrix(rnorm(n*p), n, p) %*% t(solve(diag(p) - A))
 
 t <- proc.time()
-out <- MLEdag(X=X,tau=0.3,mu=1,rho=1.2)
+out <- MLEdag(X=X, tau=0.3, mu=1, rho=1.2)
 proc.time() - t
 
 sum((out$A - A)^2)
-sum(abs((out$A != 0) - (A!=0)))
+sum(abs((out$A != 0) - (A != 0)))
 ```
 
 ## To-dos in future versions
@@ -59,10 +59,10 @@ Cross-validation functions, diagnostic plots.
 
 ## About ```clrdag``` 
 
-This is a C++/R implementation of the constrained likelihood ratio tests of a DAG. The reference for the details is 
+This is an R package for likelihood estimation and inference of a Gaussian directed acyclic graph. The reference for the details is 
 
 Li, C., Shen, X., and Pan, W. (2019). Likelihood ratio tests of a large directed acyclic graph. Submitted. 
 
-The program was originally written in July 2018. Then Ziyue Zhu (thanks to her!) and I refactored the R code version in December 2018 as part of the final project for the optimization course EE 5239. As of May 1, 2019, this R package is publicly available. It is still in development and be cautious.
+The program was originally written in July 2018. Ziyue Zhu (thanks to her!) and I refactored the R code version in December 2018 as part of the final project for the optimization course EE 5239. As of May 1, 2019, this R package is publicly available. It is still in development and be cautious.
 
 To report an issue, please file it at [here](https://github.com/chunlinli/clrdag/issues).
