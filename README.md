@@ -4,29 +4,29 @@ This package requires compilation to install from source. The following instruct
 
 ### Windows users: 
 
-0. Make sure you have R (>= 3.5.0) and Rtools35 or later (available [here](https://cran.r-project.org/bin/windows/Rtools/)) properly installed. In particular, add R and Rtools to your PATH variable. In R, install the packages ```Rcpp``` and ```RcppArmadillo```.
+0. Make sure you have [R](https://www.r-project.org/) (>= 3.5.0) and [Rtools35](https://cran.r-project.org/bin/windows/Rtools/) or later properly installed. In particular, add R and Rtools to your PATH variable. In R, install the packages ```Rcpp``` and ```RcppArmadillo```.
 
 1. Download ```clrdag.zip``` from ```pkg``` directory. Unzip ```clrdag.zip```.
 
 2. In Command Prompt, 
 ```
-cd "path\\to\\clrdag.zip" 
-R CMD build clrdag 
+cd "path\\to\\clrdag.zip"
+R CMD build clrdag
 R CMD INSTALL clrdag_*.tar.gz
 ```
 3. Delete ```clrdag``` folder, ```clrdag.zip```, and ```clrdag_*.tar.gz```.
 
-### Unix(-like) users:
+### \*nix users:
 
-0. Make sure you have R (>= 3.5.0) and building tools installed. 
+0. Make sure you have [R](https://www.r-project.org/) (>= 3.5.0) and building tools installed. 
 In R, install the packages ```Rcpp``` and ```RcppArmadillo```.
 
 1. Download ```clrdag.zip``` from ```pkg``` directory. Unzip ```clrdag.zip```.
 
-2. In terminal (Bash), 
+2. In a terminal app (Bash), 
 ```
 cd "path/to/clrdag.zip"
-R CMD build clrdag 
+R CMD build clrdag
 R CMD INSTALL clrdag_*.tar.gz
 ```
 3. Remove ```clrdag``` directory, ```clrdag.zip```, and ```clrdag_*.tar.gz```.
@@ -55,7 +55,7 @@ sum(abs((out$A != 0) - (A!=0)))
 
 ## To-dos in future versions
 
-Cross-validation functions, Diagnostic plots. 
+Cross-validation functions, diagnostic plots. 
 
 ## About ```clrdag``` 
 
@@ -63,6 +63,6 @@ This is a C++/R implementation of the constrained likelihood ratio tests of a DA
 
 Li, C., Shen, X., and Pan, W. (2019). Likelihood ratio tests of a large directed acyclic graph. Submitted. 
 
-The program was originally written in July 2018. Then Ziyue Zhu (thanks to her!) and I refactored the R code version (available at [here](https://github.umn.edu/li000007/clrdag_r/)) in December 2018 as part of the final project for the optimization course EE 5239. As of May 1, 2019, this R package is publicly available. It is still in development and be cautious.
+The program was originally written in July 2018. Then Ziyue Zhu (thanks to her!) and I refactored the R code version in December 2018 as part of the final project for the optimization course EE 5239. As of May 1, 2019, this R package is publicly available. It is still in development and be cautious.
 
 To report an issue, please file an issue at [here](https://github.com/chunlinli/clrdag/issues).
