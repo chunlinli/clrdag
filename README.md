@@ -20,7 +20,7 @@ This package requires compilation to install from source. The following instruct
 
 2. In Command Prompt, 
 ```
-cd "path\\to\\downloads"
+cd "path\\to\\Downloads"
 R CMD build clrdag
 R CMD INSTALL clrdag_*.tar.gz
 ```
@@ -35,7 +35,7 @@ In R, install the packages ```Rcpp``` and ```RcppArmadillo```.
 
 2. In a terminal app (Bash), 
 ```
-cd "path/to/downloads"
+cd "path/to/Downloads"
 R CMD build clrdag
 R CMD INSTALL clrdag_*.tar.gz
 ```
