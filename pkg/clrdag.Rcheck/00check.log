@@ -5,7 +5,7 @@
 * using option ‘--as-cran’
 * checking for file ‘clrdag/DESCRIPTION’ ... OK
 * checking extension type ... Package
-* this is package ‘clrdag’ version ‘1.1.1’
+* this is package ‘clrdag’ version ‘0.5.7’
 * checking CRAN incoming feasibility ... NOTE
 Maintainer: ‘Chunlin Li <li000007@umn.edu>’
 
@@ -22,7 +22,6 @@ New submission
 * checking installed package size ... OK
 * checking package directory ... OK
 * checking for future file timestamps ... OK
-* checking ‘build’ directory ... OK
 * checking DESCRIPTION meta-information ... OK
 * checking top-level files ... OK
 * checking for left-over files ... OK
@@ -62,13 +61,7 @@ New submission
 Compilation used the following non-portable flag(s):
   ‘-Wdate-time’ ‘-Werror=format-security’ ‘-Wformat’
 * checking compiled code ... OK
-* checking sizes of PDF files under ‘inst/doc’ ... OK
-* checking installed files from ‘inst/doc’ ... OK
-* checking files in ‘vignettes’ ... OK
 * checking examples ... OK
-* checking for unstated dependencies in vignettes ... OK
-* checking package vignettes in ‘inst/doc’ ... OK
-* checking re-building of vignette outputs ... OK
 * checking PDF version of manual ... OK
 * DONE
 Status: 2 NOTEs

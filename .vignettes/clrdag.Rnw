@@ -150,7 +150,7 @@ Distributed optimization and statistical learning via the alternating direction 
 Cormen, T. H., Leiserson, C. E., Rivest, R. L., \& Stein, C. (2001). \emph{Introduction to Algorithms}. MIT press.
 
 \bibitem{li2019likelihood}
-Li, C., Shen, X., \& Pan, W. (2019) Likelihood ratio tests of a large directed acyclic graph. Submitted.
+Li, C., Shen, X., \& Pan, W. (2019) Likelihood ratio tests of a large directed acyclic graph. \emph{Journal of the American Statistical Association}. Accepted.
 
 \bibitem{shen2012likelihood}
 Shen, X., Pan, W., \& Zhu, Y. (2012). 
@@ -166,10 +166,6 @@ Constrained likelihood for reconstructing a directed acyclic Gaussian graph.
 Zheng, X., Aragam, B., Ravikumar, P. K., \& Xing, E. P. (2018). 
 DAGs with NO TEARS: Continuous optimization for structure learning. 
 \emph{Advances in Neural Information Processing Systems}, pp. 9472-9483.
-
-
-
-
 
 \end{thebibliography}
 \end{document}
