@@ -5,7 +5,7 @@
 MLE/LRT of a Gaussian directed acyclic graph
 }
 \description{
-A function computes the MLE/LRT of a Gaussian directed acyclic graph using difference convex programming and alternating direction method of multipliers.
+Computes the MLE/LRT of a Gaussian directed acyclic graph using difference convex programming and alternating direction method of multipliers.
 }
 \usage{
 MLEdag(X, A = NULL, Lambda = NULL, D = NULL, tau, mu, rho, 
