@@ -75,7 +75,7 @@ MLEdag(X, A = NULL, Lambda = NULL, D = NULL, tau, mu, rho,
 
 \references{
   Li, C., Shen, X., and Pan, W. (2019). Likelihood ratio tests for a large directed acyclic graph.
-  \emph{Journal of the American Statistical Association}. Accepted. 
+  \emph{Journal of the American Statistical Association}. Accepted. <doi:10.1080/01621459.2019.1623042>.
 }
 
 \author{
