@@ -1,4 +1,0 @@
-useDynLib(clrdag, .registration=TRUE)
-importFrom(Rcpp, evalCpp)
-importFrom(stats, pchisq, pnorm)
-export(MLEdag)
