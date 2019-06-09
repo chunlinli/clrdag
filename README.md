@@ -13,7 +13,7 @@ Li, C., Shen, X., and Pan, W. (2019). Likelihood ratio tests for a large directe
 
 ## Installation 
 
-~~It is strongly recommended to install `clrdag` from [CRAN](https://cran.r-project.org/).~~ Alternatively, you may follow the instructions below. 
+It is strongly recommended to install `clrdag` from [CRAN](https://cran.r-project.org/). Alternatively, you may follow the instructions below. 
 
 To achieve best performance, you may want to install the latest version of [OpenBLAS](https://github.com/xianyi/OpenBLAS) or [Intel Math Kernel Library](https://software.intel.com/mkl). You are also recommended to use a compiler that fully supports [OpenMP](https://www.openmp.org/). 
 

@@ -96,7 +96,7 @@ n<-1000
 sparsity <- 2/p
 A <- matrix(rbinom(p*p,1,sparsity)*sign(runif(p*p,min=-1,max=1)),p,p)
 A[upper.tri(A,diag=TRUE)] <- 0
-X <- matrix(rnorm(n*p),n,p) %*% t(solve(diag(p)-A))
+X <- matrix(rnorm(n*p),n,p) \%*\% t(solve(diag(p)-A))
 out <- MLEdag(X=X,tau=0.3,mu=1,rho=1.2,trace_obj=FALSE) # compute the MLE
 sum(abs((out$A!=0)-(A!=0))) # Hamming distance to the truth graph
 
