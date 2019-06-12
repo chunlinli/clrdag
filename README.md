@@ -7,44 +7,15 @@
 See [`clrdag-slides.pdf`](https://github.com/chunlinli/clrdag/blob/master/clrdag-slides.pdf) for the introduction slides to the package. 
 The complete reference for the methodology is 
 
-Li, C., Shen, X., and Pan, W. (2019). Likelihood ratio tests for a large directed acyclic graph. *Journal of the American Statistical Association*. Accepted. 
+Li, C., Shen, X., and Pan, W. (2019). Likelihood ratio tests for a large directed acyclic graph. *Journal of the American Statistical Association*. Accepted. [DOI:10.1080/01621459.2019.1623042](https://doi.org/10.1080/01621459.2019.1623042).
 
 ~~See also the package vignette by `vignette('clrdag')` in R.~~
 
 ## Installation 
 
-It is strongly recommended to install `clrdag` from [CRAN](https://cran.r-project.org/). Alternatively, you may follow the instructions below. 
+It is strongly recommended to install `clrdag` from [CRAN](https://cran.r-project.org/package=clrdag). 
 
 To achieve best performance, you may want to install the latest version of [OpenBLAS](https://github.com/xianyi/OpenBLAS) or [Intel Math Kernel Library](https://software.intel.com/mkl). You are also recommended to use a compiler that fully supports [OpenMP](https://www.openmp.org/). 
-
-### Windows users: 
-
-0. Make sure you have [R](https://www.r-project.org/) (>= 3.5.0) and [Rtools](https://cran.r-project.org/bin/windows/Rtools/) (>= 35) installed. In particular, add R and Rtools to your PATH variable. In R, install the packages `Rcpp` and `RcppArmadillo`.
-
-1. Download [`clrdag.zip`](https://github.com/chunlinli/clrdag/blob/master/pkg/clrdag.zip) to local `Downloads` folder. Unzip `clrdag.zip` in `Downloads`.
-
-2. In Command Prompt, 
-```
-cd "path\\to\\Downloads"
-R CMD build clrdag
-R CMD INSTALL clrdag_*.tar.gz
-```
-3. Delete `clrdag` folder, `clrdag.zip`, and `clrdag_*.tar.gz` in `Downloads`.
-
-### \*nix users:
-
-0. Make sure you have [R](https://www.r-project.org/) (>= 3.5.0) and building tools installed. 
-In R, install the packages `Rcpp` and `RcppArmadillo`.
-
-1. Download [`clrdag.zip`](https://github.com/chunlinli/clrdag/blob/master/pkg/clrdag.zip) to local `Downloads` directory. Unzip `clrdag.zip` in `Downloads`.
-
-2. In a terminal app (Bash), 
-```
-cd "path/to/Downloads"
-R CMD build clrdag
-R CMD INSTALL clrdag_*.tar.gz
-```
-3. Remove `clrdag` directory, `clrdag.zip`, and `clrdag_*.tar.gz` in `Downloads`.
 
 ## Example(s)
 
