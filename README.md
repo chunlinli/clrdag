@@ -13,9 +13,14 @@ Li, C., Shen, X., and Pan, W. (2019). Likelihood ratio tests for a large directe
 
 ## Installation 
 
-It is strongly recommended to install `clrdag` from [CRAN](https://cran.r-project.org/package=clrdag). 
+You can install `clrdag` by 
+```r
+devtools::install_github("chunlinli/clrdag/pkg/clrdag")
+```
 
-To achieve best performance, you may want to install the latest version of [OpenBLAS](https://github.com/xianyi/OpenBLAS) or [Intel Math Kernel Library](https://software.intel.com/mkl). You are also recommended to use a compiler that fully supports [OpenMP](https://www.openmp.org/). 
+~~It is strongly recommended to install `clrdag` from [CRAN](https://cran.r-project.org/package=clrdag).~~
+
+To achieve best performance, you may want to install the latest version of [OpenBLAS](https://github.com/xianyi/OpenBLAS) or [Intel Math Kernel Library](https://software.intel.com/mkl). ~~You are also recommended to use a compiler that fully supports [OpenMP](https://www.openmp.org/).~~
 
 ## Example(s)
 
@@ -23,7 +28,7 @@ In this example, a 50 by 50 random adjacency matrix is generated,
 where there are 43 edges in the graph. 
 For each edge, the strength is uniformly distributed in [-1,-0.7] U [0.7,1]. The random error is standard normal. 
 
-```
+```r
 library(clrdag)
 set.seed(2018)
 p <- 50; n <- 1000; sparsity <- 2/p
